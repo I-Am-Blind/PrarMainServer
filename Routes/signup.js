@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
   } catch (error) {
     return res.status(201).send({ message : "Databse Write Error" , error: true });
   }
-  return res.status(201).send({ message : `Registered User ${userdata?.username}`, data : generated_uid.id });
+  return res.status(201).send({ message : `Registered User ${userdata?.username}`, id : generated_uid.id });
 });
 
 export default router;
