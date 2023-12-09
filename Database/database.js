@@ -1,51 +1,30 @@
-import Realm from 'realm';
-import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
+import { db } from "./firebaseconfig.js";
 
-const UserSchema = {
-    name: 'User',
-    properties: {
-        _id: 'uuid',
-        username: 'string',
-        password: 'string'
-    },
-    primaryKey: '_id',
-};
 
-const convertToRealmUUID = (uuidString) => {
-    return new Realm.BSON.UUID(uuidString);
-};
+const findDevice = async (device_id) => {
+  const device = await db.collection("devices").doc(device_id).get()
+  return device.data()
+}
 
-let realm;
+const findUser = async (user_id) => {
+  const user = await db.collection("users").doc(user_id).get()
+  return user.data()
+}
 
-const connectDB = async () => {
-    realm = await Realm.open({
-        path: 'myrealm',
-        schema: [UserSchema]
-    });
-};
+const addToCollection = async (collection , data) => {
+  const res = await db.collection(collection).add(data); 
+  return res
+}
 
-const registerUser = async (username, password) => {
-    const hashedPassword = await bcrypt.hash(password, 10);
+const addToDoc = async (collection, data, doc = null) => {
+  let res
+  if (doc){
+    res = await db.collection(collection).doc(doc).set(data)
+  }  else {
+     res = await db.collection(collection).add(data)
+  }
+   
+  return res
+}
 
-    try {
-        let user;
-        realm.write(() => {
-            user = realm.create('User', {
-                _id: convertToRealmUUID(uuidv4()),
-                username: username,
-                password: hashedPassword
-            });
-        });
-        return user;
-    } catch (error) {
-        console.error('Error registering user:', error);
-        throw error; // Rethrow the error to be handled by the caller
-    }
-};
-
-const findUser = async (username) => {
-    return realm.objects('User').filtered(`username = "${username}"`)[0];
-};
-
-export { connectDB, registerUser, findUser };
+export { findUser , findDevice ,addToCollection, addToDoc};
