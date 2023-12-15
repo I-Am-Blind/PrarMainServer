@@ -1,5 +1,5 @@
 import { db } from "./firebaseconfig.js";
-
+import admin from "firebase-admin";1
 
 const findDevice = async (device_id) => {
   const device = await db.collection("devices").doc(device_id).get()
@@ -16,7 +16,7 @@ const addToCollection = async (collection , data) => {
   return res
 }
 
-const addToDoc = async (collection, data, doc = null) => {
+const addToDoc = async (collection, doc, data = null) => {
   let res
   if (doc){
     res = await db.collection(collection).doc(doc).set(data)
@@ -27,4 +27,15 @@ const addToDoc = async (collection, data, doc = null) => {
   return res
 }
 
-export { findUser , findDevice ,addToCollection, addToDoc};
+const addToSensorData = async (userId, sensor, data) => {
+
+  const userDocRef = db.collection('sensordata').doc(userId);
+  let updateObject = {};
+  updateObject[sensor] = admin.firestore.FieldValue.arrayUnion(data);
+  const res = userDocRef.update(updateObject)
+  return res
+
+}
+
+
+export { findUser , findDevice ,addToCollection, addToDoc, addToSensorData};

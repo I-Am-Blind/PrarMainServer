@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import { connectDB } from './Database/firebaseconfig.js';
-import signinRouter from './Routes/signin.js';
+import sensordata from './Routes/sensordata.js'
 import signupRouter from './Routes/signup.js';
 import cors from 'cors';
 
@@ -13,6 +13,7 @@ const server = http.createServer(app);
 
 // app.use('/signin', signinRouter);
 app.use('/signup', signupRouter);
+app.use('/sensordata', sensordata);
 
 
 connectDB().then(() => {
