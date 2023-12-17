@@ -16,7 +16,7 @@ const addToCollection = async (collection , data) => {
   return res
 }
 
-const addToDoc = async (collection, doc, data = null) => {
+const addToDoc = async (collection,data, doc = null ) => {
   let res
   if (doc){
     res = await db.collection(collection).doc(doc).set(data)

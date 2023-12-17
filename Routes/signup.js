@@ -23,11 +23,13 @@ router.post("/", async (req, res) => {
 
   let generated_uid
   try {  
+    console.log(userdata)
     generated_uid = await addToDoc("users", userdata)
     device.users.push({ username: userdata?.username, id : generated_uid?.id});
-    await addToDoc("devices", device_id, {users : device.users} );
+    await addToDoc("devices", {users : device.users}, device_id );
 
   } catch (error) {
+    console.log(error)
     return res.status(201).send({ message : "Databse Write Error" , error: true });
   }
   return res.status(201).send({ message : `Registered User ${userdata?.username}`, id : generated_uid.id });
